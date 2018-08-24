@@ -2,40 +2,57 @@
 const express = require('express')
 const router = express.Router()
 
+const member = require('../../src/controllers/api/memberController')
+
 router
   .route('/')
   .get((req, res, next) => {
     // print info
     console.info(`${req.method} - Get all members`)
 
-    sendResponse(req, res, next)
+    member.getMembers().then(apiResponse => {
+      sendResponse(req, res, next, apiResponse)
+    })
   })
   .post((req, res, next) => {
     // print info
     console.info(`${req.method} - Create member`)
 
-    sendResponse(req, res, next)
+    let params = req.body
+    member.createMember(params).then(apiResponse => {
+      sendResponse(req, res, next, apiResponse)
+    })
   })
 
 router
   .route('/:id')
-  // print info
   .get((req, res, next) => {
-    console.info(`${req.method} - get member id: ${req.params.id}`)
+    const memberId = req.params.id
+    // print info
+    console.info(`${req.method} - get member id: ${memberId}`)
 
-    sendResponse(req, res, next)
+    member.getMembers(memberId).then(apiResponse => {
+      sendResponse(req, res, next, apiResponse)
+    })
   })
   .put((req, res, next) => {
     // print info
-    console.info(` ${req.method} - update member id:  ${req.params.id}`)
+    const memberId = req.params.id
+    const memberData = req.body
+    console.info(`${req.method} - update member id:  ${memberId}`)
 
-    sendResponse(req, res, next)
+    member.updateMember(memberId, memberData).then(apiResponse => {
+      sendResponse(req, res, next, apiResponse)
+    })
   })
   .delete((req, res, next) => {
     // print info
-    console.info(` ${req.method} - delete member id:  ${req.params.id}`)
+    const memberId = req.params.id
+    console.info(`${req.method} - delete member id:  ${memberId}`)
 
-    sendResponse(req, res, next)
+    member.deleteMember(memberId).then(apiResponse => {
+      sendResponse(req, res, next, apiResponse)
+    })
   })
 
 let sendResponse = (req, res, next, data = 'OK') => {
