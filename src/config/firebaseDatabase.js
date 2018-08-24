@@ -48,12 +48,17 @@ exports.retreive = async (collection, doc = null) => {
     let datas = []
 
     response.forEach(data => {
-      datas = [data.data(), ...datas]
+      let resDoc = {id: data.id, ...data.data()}
+      datas = [resDoc, ...datas]
     })
 
     return datas
   } else {
     let response = await docRef.doc(doc).get()
-    if (!response.exists) { return 'No such data.' } else return response.data()
+    if (!response.exists) {
+      return 'No such data.'
+    } else {
+      return {id: response.id, ...response.data()}
+    }
   }
 }

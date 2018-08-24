@@ -1,4 +1,5 @@
 const db = require('../../config/firebaseDatabase')
+const crypto = require('crypto')
 
 exports.getMembers = async (id = null) => {
   const retreiveDoc = await db.retreive('members', id)
@@ -17,7 +18,12 @@ exports.deleteMember = async (id) => {
 }
 
 exports.createMember = async (params) => {
-  const dbResponse = await db.create('members', params.name, params)
+  const hashName = crypto
+    .createHash('md5')
+    .update(params.name)
+    .digest('hex')
+
+  const dbResponse = await db.create('members', hashName, params)
 
   return dbResponse
 }
